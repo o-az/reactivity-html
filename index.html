@@ -1,0 +1,42 @@
+<html lang="en">
+  <script type="module">
+    /** Arrow.js https://www.arrow-js.com/ */
+    import { reactive, html } from 'https://esm.sh/@arrow-js/core';
+
+    const todos = reactive({ items: [] });
+
+    function addTodo(event) {
+      event.preventDefault();
+      const inputElement = document.getElementById('todo');
+      todos.items.push({ done: false, text: inputElement.value });
+      inputElement.value = '';
+    }
+
+    function remaining(todos) {
+      return todos.items.filter((todo) => !todo.done).length;
+    }
+
+    const appElement = document.getElementById('app');
+    const template = html`<form @submit="${addTodo}">
+        <input name="todo" id="todo" type="text" />
+      </form>
+      <ul>
+        ${() =>
+          todos.items.map(
+            (todo, index) =>
+              html`<li>
+                ${todo.text}
+                <input
+                  type="checkbox"
+                  @input="${() => (todos.items[index].done = true)}"
+                />
+              </li>`
+          )}
+      </ul>
+      <p>${() => remaining(todos)} remaining</p>`;
+
+    template(appElement);
+  </script>
+
+  <main id="app"></main>
+</html>
